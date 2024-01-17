@@ -10,6 +10,15 @@ public class ApplicationDbContext : IdentityDbContext<UserEntity, IdentityRole<i
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }
 
+    public DbSet<BookEntity> Books { get; set; }
+    public DbSet<BookSubjectEntity> BooksToSubjests { get; set; }
+
+    public DbSet<LibraryEntity> Libraries { get; set; }
+
+    public DbSet<RatingEntity> Ratings { get; set; }
+
+    public DbSet<SubjectEntity> Subjects { get; set; }
+
     // protected override void OnModelCreating(ModelBuilder modelBuilder)
     // {
     //     base.OnModelCreating(modelBuilder);

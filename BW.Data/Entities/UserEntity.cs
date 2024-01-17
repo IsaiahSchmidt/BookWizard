@@ -9,6 +9,7 @@ namespace BW.Data.Entities
 {
     public class UserEntity : IdentityUser<int>
     {
+    
     [Key]
     public int Id {get; set;}
     
@@ -20,5 +21,6 @@ namespace BW.Data.Entities
     [MaxLength(100)]
     public string? LastName {get; set;} = string.Empty;
     public DateTime DateCreated {get; set;}
+
     }
 }

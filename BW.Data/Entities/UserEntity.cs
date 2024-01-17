@@ -1,11 +1,15 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using BW.Data.Entities;
 
-namespace BW.Data.Entities;
-
-public class UserEntity : IdentityUser<int>
+namespace BW.Data.Entities
 {
+    public class UserEntity : IdentityUser<int>
+    {
+    
     [Key]
     public int Id {get; set;}
     
@@ -17,4 +21,6 @@ public class UserEntity : IdentityUser<int>
     [MaxLength(100)]
     public string? LastName {get; set;} = string.Empty;
     public DateTime DateCreated {get; set;}
+
+    }
 }

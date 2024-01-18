@@ -9,5 +9,7 @@ namespace BW.Services.Book
     public interface IBookService
     {
         Task<BookListItem?> CreateBookAsync(BookCreate book);
+        Task<IEnumerable<BookListItem>> GetAllBooksAsync();
+        Task<BookDetail?> GetBookByIdAsync(int bookId);
     }
 }

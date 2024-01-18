@@ -32,5 +32,19 @@ namespace BW.WebApi.Controllers
             }
             return BadRequest(new TextResponse("Could not create book"));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllBooks()
+        {
+            var books = await _bookService.GetAllBooksAsync();
+            return Ok(books);
+        }
+
+        [HttpGet("{bookId:int}")]
+        public async Task<IActionResult> GetBookById([FromRoute] int bookId)
+        {
+            BookDetail? book = await _bookService.GetBookByIdAsync(bookId);
+            return book is not null ? Ok(book) : NotFound();
+        }
     }
 }

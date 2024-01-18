@@ -9,9 +9,9 @@ namespace BW.Models.Book
     public class BookCreate
     {
         [Required]
-        [MaxLength(600, ErrorMessage = "Name must be no more than 600 characters")] 
-        [MinLength(1, ErrorMessage = " Must be at least 1 character")]
-        public string Name {get; set; } = string.Empty;
+        [MaxLength(600, ErrorMessage = "Title must be no more than 600 characters")] 
+        [MinLength(1, ErrorMessage = " Title must be at least 1 character")]
+        public string Title {get; set; } = string.Empty;
 
         [MaxLength(250, ErrorMessage = "Must be no more than 250 characters")] 
         [MinLength(1, ErrorMessage = " Must be at least 1 character")]

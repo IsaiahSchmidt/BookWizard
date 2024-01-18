@@ -8,6 +8,7 @@ using BW.Models.Book;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BW.Services.Book
 {
@@ -35,7 +36,7 @@ namespace BW.Services.Book
         {
             BookEntity entity = new()
             {
-                Name = book.Name,
+                Title = book.Title,
                 Author = book.Author,
                 Description = book.Description,
                 Length = book.Length
@@ -51,12 +52,45 @@ namespace BW.Services.Book
             BookListItem response = new()
             {
                 Id = entity.Id,
-                Name = entity.Name,
+                Title = entity.Title,
                 Author = entity.Author,
                 Description = entity.Description,
                 Length = entity.Length
             };
             return response;
         }
+
+        public async Task<IEnumerable<BookListItem>> GetAllBooksAsync()
+        {
+            List<BookListItem> books = await _dbContext.Books
+                .Select(entity => new BookListItem
+                {
+                    Id = entity.Id,
+                    Title = entity.Title,
+                    Author = entity.Author,
+                    Description = entity.Description
+                }).ToListAsync();
+            return books;
+        }
+
+        public async Task<BookDetail?> GetBookByIdAsync(int bookId)
+        {
+            BookEntity? book = await _dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId);
+            return book is null ? null : new BookDetail
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Author = book.Author,
+                Description = book.Description,
+                Length = book.Length
+            };
+        }
+
+    // 4/5 Private functions
+    // CheckForACompleteBook -- Checks if the Supplied Data would complete a book in the DB, So Title, Description, author
+    // FetchDataFromAPI(title, author) -- Search, Get the work
+    // ParseWorkData(JsonData)
+    // CreateAndLinkSubjects ()
+    // CheckSubjectUnique(subject)
     }
 }

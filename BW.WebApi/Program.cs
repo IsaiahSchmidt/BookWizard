@@ -10,12 +10,14 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using BW.Services.Token;
+using BW.Services.Book;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IBookService, BookService>();
 
 builder.Services.AddHttpContextAccessor();
 

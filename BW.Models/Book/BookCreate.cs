@@ -13,6 +13,7 @@ namespace BW.Models.Book
         [MinLength(1, ErrorMessage = " Title must be at least 1 character")]
         public string Title {get; set; } = string.Empty;
 
+        [Required]
         [MaxLength(250, ErrorMessage = "Must be no more than 250 characters")] 
         [MinLength(1, ErrorMessage = " Must be at least 1 character")]
         public string Author {get; set;} = string.Empty;

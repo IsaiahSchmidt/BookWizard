@@ -11,6 +11,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using BW.Services.Token;
 using BW.Services.Book;
+using BW.Services.Subject;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<ISubjectService, SubjectService>();
 
 builder.Services.AddHttpContextAccessor();
 

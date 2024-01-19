@@ -7,5 +7,6 @@ namespace BW.Services.Rating
     {
         Task<RatingListItem?> CreateRatingAsync(RatingCreate rating);
         Task<RatingDetail?> GetRatingByIdAsync(int ratingId);
+        Task<bool> DeleteRatingAsync(int ratingId);
     }
 }

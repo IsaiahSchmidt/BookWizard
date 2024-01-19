@@ -63,5 +63,14 @@ namespace BW.Services.Rating
                 BookId = rating.BookId
             };
         }
+
+        public async Task<bool> DeleteRatingAsync(int ratingId)
+        {
+            var ratingEntity = await _dbContext.Ratings.FindAsync(ratingId);
+            if(ratingEntity?.OwnerId != _userId)
+                return false;
+            _dbContext.Ratings.Remove(ratingEntity);
+            return await _dbContext.SaveChangesAsync() == 1;
+        }
     }
 }

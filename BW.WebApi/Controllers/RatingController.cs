@@ -37,5 +37,13 @@ namespace BW.WebApi.Controllers
             RatingDetail? detail = await _ratingService.GetRatingByIdAsync(ratingId);
             return detail is not null ? Ok(detail) : NotFound();
         }
+
+        [HttpDelete("{ratingId:int}")]
+        public async Task<IActionResult> DeleteRating([FromRoute] int ratingId)
+        {
+            return await _ratingService.DeleteRatingAsync(ratingId)
+                ? Ok($"Rating {ratingId} was successfully deleted")
+                : BadRequest($"Rating {ratingId} could not be deleted");
+        }
     }
 }

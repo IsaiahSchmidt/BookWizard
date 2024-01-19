@@ -2,6 +2,7 @@ using BW.Data;
 using BW.Data.Entities;
 using BW.Models.Rating;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BW.Services.Rating
 {
@@ -42,9 +43,25 @@ namespace BW.Services.Rating
                 Id = entity.Id,
                 Title = entity.Title,
                 Comment = entity.Comment,
-                StarRating = entity.StarRating
+                StarRating = entity.StarRating,
+                BookId = entity.BookId
             };
             return ratingListItem;
+        }
+
+        public async Task<RatingDetail?> GetRatingByIdAsync(int ratingId)
+        {
+            RatingEntity? rating = await _dbContext.Ratings.FirstOrDefaultAsync(r => r.Id == ratingId
+                && r.OwnerId == _userId);
+
+            return rating is null ? null : new RatingDetail
+            {
+                Id = rating.Id,
+                Title = rating.Title,
+                Comment = rating.Comment,
+                StarRating = rating.StarRating,
+                BookId = rating.BookId
+            };
         }
     }
 }

@@ -30,5 +30,12 @@ namespace BW.WebApi.Controllers
             return BadRequest(new TextResponse("Could not create rating."));
             
         }
+
+        [HttpGet("{ratingId:int}")]
+        public async Task<IActionResult> GetRatingById([FromRoute] int ratingId)
+        {
+            RatingDetail? detail = await _ratingService.GetRatingByIdAsync(ratingId);
+            return detail is not null ? Ok(detail) : NotFound();
+        }
     }
 }

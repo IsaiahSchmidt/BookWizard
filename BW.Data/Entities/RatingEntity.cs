@@ -13,8 +13,9 @@ namespace BW.Data.Entities
         public int Id {get; set;}
 
         [Required]
-        [ForeignKey(nameof(BookEntity))]
+        [ForeignKey(nameof(Book))]
         public int BookId {get; set;}
+        BookEntity Book {get; set;} = null;
 
         [Required]
         [Range(1,5, ErrorMessage = "Rating must be between 1 and 5.")]

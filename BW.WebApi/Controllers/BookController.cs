@@ -33,6 +33,22 @@ namespace BW.WebApi.Controllers
             return BadRequest(new TextResponse("Could not create book"));
         }
 
+
+        [HttpPost("Subject")]
+        public async Task<IActionResult> AddSubjectToBook([FromBody] AddSubjectToBook request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var response = await _bookService.AddSubjectToBook(request);
+            if (response)
+            {
+                return Ok("Subject added!");
+            }
+            return BadRequest(new TextResponse("Could not add subject to book"));
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllBooks()
         {
@@ -45,6 +61,21 @@ namespace BW.WebApi.Controllers
         {
             BookDetail? book = await _bookService.GetBookByIdAsync(bookId);
             return book is not null ? Ok(book) : NotFound();
+        }
+
+        [HttpDelete("Subject")]
+        public async Task<IActionResult> RemoveSubjectFromBook([FromBody] AddSubjectToBook request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var response = await _bookService.RemoveSubjectFromBook(request);
+            if (response)
+            {
+                return Ok("Subject removed!");
+            }
+            return BadRequest(new TextResponse("Could not remove subject from book"));
         }
     }
 }

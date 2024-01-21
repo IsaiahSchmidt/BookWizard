@@ -39,7 +39,7 @@ namespace BW.Services.Book
         public async Task<BookListItem?> CreateBookAsync(BookCreate book)
         {
             BookListItem? foundBook = CheckBookUnique(book.Title);
-            if(foundBook != null)
+            if (foundBook != null)
                 return foundBook;
 
             BookEntity entity = new();
@@ -64,7 +64,8 @@ namespace BW.Services.Book
                 entity.Author = book.Author;
 
                 OL_Works? work = await FetchDataFromAPI(book.Title, book.Author);
-                if(work == null) {
+                if (work == null)
+                {
                     Console.WriteLine("no Books Found");
                     return null;
                 }
@@ -81,7 +82,8 @@ namespace BW.Services.Book
                 }
                 Console.WriteLine("Should Have Created A book!");
 
-                if(await CreateSubjects(work.Subjects, entity.Id) == false) {
+                if (await CreateSubjects(work.Subjects, entity.Id) == false)
+                {
 
                     _dbContext.Books.Remove(entity);
                     var numOfChanges = await _dbContext.SaveChangesAsync();
@@ -131,6 +133,56 @@ namespace BW.Services.Book
             };
         }
 
+        public async Task<bool> AddSubjectToBook(AddSubjectToBook request)
+        {
+            SubjectEntity? subjectEntity = _dbContext.Subjects.Find(request.SubjectId);
+            BookEntity? bookEntity = _dbContext.Books.Find(request.BookId);
+
+            if (subjectEntity == null || bookEntity == null)
+            {
+                return false;
+            }
+
+            BookSubjectEntity entity = new()
+            {
+                BookId = bookEntity.Id,
+                SubjectId = subjectEntity.Id
+            };
+
+            _dbContext.BooksToSubjests.Add(entity);
+            var numOfChanges = await _dbContext.SaveChangesAsync();
+            if (numOfChanges != 1)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<bool> RemoveSubjectFromBook(AddSubjectToBook request)
+        {
+            SubjectEntity? subjectEntity = _dbContext.Subjects.Find(request.SubjectId);
+            BookEntity? bookEntity = _dbContext.Books.Find(request.BookId);
+
+            if (subjectEntity == null || bookEntity == null)
+            {
+                return false;
+            }
+
+            BookSubjectEntity entity = new()
+            {
+                BookId = bookEntity.Id,
+                SubjectId = subjectEntity.Id
+            };
+
+            _dbContext.BooksToSubjests.Remove(entity);
+            var numOfChanges = await _dbContext.SaveChangesAsync();
+            if (numOfChanges != 1)
+            {
+                return false;
+            }
+            return true;
+        }
+
         //* Helper Methods
 
         // 4/5 Private functions
@@ -157,7 +209,7 @@ namespace BW.Services.Book
             OL_Works? oL_Works = JsonSerializer.Deserialize<OL_Works>(await worksResponse.Content.ReadAsStringAsync());
             if (oL_Works == null)
                 return null;
-            
+
             return oL_Works;
 
         }
@@ -169,8 +221,10 @@ namespace BW.Services.Book
                 SubjectListItem? subjectEntity = new();
                 subjectEntity = CheckSubjectUnique(subject);
 
-                if(subjectEntity == null) {
-                    SubjectEntity entity = new(){
+                if (subjectEntity == null)
+                {
+                    SubjectEntity entity = new()
+                    {
                         Name = subject
                     };
 
@@ -178,7 +232,8 @@ namespace BW.Services.Book
 
                     var numOfChanges = await _dbContext.SaveChangesAsync();
 
-                    if(numOfChanges != 1) {
+                    if (numOfChanges != 1)
+                    {
                         return false;
                     }
 
@@ -189,7 +244,8 @@ namespace BW.Services.Book
                     };
                 }
 
-                BookSubjectEntity bookSubjectEntity = new(){
+                BookSubjectEntity bookSubjectEntity = new()
+                {
                     BookId = id,
                     SubjectId = subjectEntity!.Id
                 };
@@ -198,7 +254,8 @@ namespace BW.Services.Book
 
                 var numberOfChanges = await _dbContext.SaveChangesAsync();
 
-                if(numberOfChanges != 1) {
+                if (numberOfChanges != 1)
+                {
                     return false;
                 }
             }
@@ -209,13 +266,16 @@ namespace BW.Services.Book
         private SubjectListItem? CheckSubjectUnique(string subject)
         {
             List<SubjectListItem> entities = _dbContext.Subjects.Where(entity => entity.Name == subject)
-            .Select(entity => new SubjectListItem(){
+            .Select(entity => new SubjectListItem()
+            {
                 Id = entity.Id,
                 Name = entity.Name
             }).ToList();
 
-            foreach (var entity in entities) {
-                if(subject == entity.Name) {
+            foreach (var entity in entities)
+            {
+                if (subject == entity.Name)
+                {
                     return entity;
                 }
             }
@@ -227,7 +287,8 @@ namespace BW.Services.Book
         private BookListItem? CheckBookUnique(string title)
         {
             List<BookListItem> entities = _dbContext.Books.Where(entity => entity.Title == title)
-            .Select(entity => new BookListItem(){
+            .Select(entity => new BookListItem()
+            {
                 Id = entity.Id,
                 Title = entity.Title,
                 Author = entity.Author,
@@ -235,8 +296,10 @@ namespace BW.Services.Book
                 Length = entity.Length
             }).ToList();
 
-            foreach (var entity in entities) {
-                if(title == entity.Title) {
+            foreach (var entity in entities)
+            {
+                if (title == entity.Title)
+                {
                     return entity;
                 }
             }

@@ -38,6 +38,13 @@ namespace BW.WebApi.Controllers
             return detail is not null ? Ok(detail) : NotFound();
         }
 
+        [HttpGet("OwnerId/{ownerId:int}")]
+        public async Task<IActionResult> GetRatingsByOwnerId([FromRoute] int ownerId)
+        {
+            var ratings = await _ratingService.GetRatingsByOwnerIdAsync(ownerId);
+            return ratings is not null ? Ok(ratings) : NotFound();
+        }
+
         [HttpPut]
         public async Task<IActionResult> UpdateRating([FromBody] RatingUpdate rating)
         {

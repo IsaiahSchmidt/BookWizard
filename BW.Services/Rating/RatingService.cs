@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using BW.Data;
 using BW.Data.Entities;
 using BW.Models.Rating;
@@ -63,6 +64,26 @@ namespace BW.Services.Rating
                 BookId = rating.BookId
             };
         }
+
+        public async Task<IEnumerable<RatingListItem?>> GetRatingsByOwnerIdAsync(int ownerId)
+        {
+            List<RatingListItem> ratings = await _dbContext.Ratings
+                .Where(entity => entity.OwnerId == ownerId)
+                .Select(entity => new RatingListItem
+                {
+                    Id = entity.Id,
+                    BookId = entity.BookId,
+                    Title = entity.Title,
+                    Comment = entity.Comment,
+                    StarRating = entity.StarRating 
+                }).ToListAsync();
+            return ratings;
+        }
+
+        // public async Task<List<RatingDetail?>> GetRatingByBookIdAsync(int bookId)
+        // {
+        //     List<RatingEntity?> ratings = await _dbContext.Ratings.
+        // }
 
         public async Task<bool> UpdateRatingAsync(RatingUpdate rating)
         {

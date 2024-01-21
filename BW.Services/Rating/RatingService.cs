@@ -23,7 +23,7 @@ namespace BW.Services.Rating
                 throw new Exception("Attempted to build RatingService without ID claim");
 
             _dbContext = dbContext;
-        } 
+        }
 
         public async Task<RatingListItem?> CreateRatingAsync(RatingCreate rating)
         {
@@ -36,9 +36,9 @@ namespace BW.Services.Rating
             };
             _dbContext.Ratings.Add(entity);
             var numberOfChanges = await _dbContext.SaveChangesAsync();
-            if(numberOfChanges != 1)
+            if (numberOfChanges != 1)
                 return null;
-            
+
             RatingListItem ratingListItem = new()
             {
                 Id = entity.Id,
@@ -75,20 +75,30 @@ namespace BW.Services.Rating
                     BookId = entity.BookId,
                     Title = entity.Title,
                     Comment = entity.Comment,
-                    StarRating = entity.StarRating 
+                    StarRating = entity.StarRating
                 }).ToListAsync();
             return ratings;
         }
 
-        // public async Task<List<RatingDetail?>> GetRatingByBookIdAsync(int bookId)
-        // {
-        //     List<RatingEntity?> ratings = await _dbContext.Ratings.
-        // }
+        public async Task<IEnumerable<RatingListItem?>> GetRatingsByBookIdAsync(int bookId)
+        {
+            List<RatingListItem> ratings = await _dbContext.Ratings
+                .Where(entity => entity.BookId == bookId)
+                .Select(entity => new RatingListItem
+                {
+                    Id = entity.Id,
+                    OwnerId = entity.OwnerId,
+                    Title = entity.Title,
+                    Comment = entity.Comment,
+                    StarRating = entity.StarRating
+                }).ToListAsync();
+            return ratings;
+        }
 
         public async Task<bool> UpdateRatingAsync(RatingUpdate rating)
         {
             RatingEntity? entity = await _dbContext.Ratings.FindAsync(rating.Id);
-            if(entity?.OwnerId != _userId)
+            if (entity?.OwnerId != _userId)
                 return false;
             entity.Title = rating.Title;
             entity.Comment = rating.Comment;
@@ -101,7 +111,7 @@ namespace BW.Services.Rating
         public async Task<bool> DeleteRatingAsync(int ratingId)
         {
             var ratingEntity = await _dbContext.Ratings.FindAsync(ratingId);
-            if(ratingEntity?.OwnerId != _userId)
+            if (ratingEntity?.OwnerId != _userId)
                 return false;
             _dbContext.Ratings.Remove(ratingEntity);
             return await _dbContext.SaveChangesAsync() == 1;

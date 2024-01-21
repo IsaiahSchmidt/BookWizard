@@ -11,5 +11,8 @@ namespace BW.Services.Book
         Task<BookListItem?> CreateBookAsync(BookCreate book);
         Task<IEnumerable<BookListItem>> GetAllBooksAsync();
         Task<BookDetail?> GetBookByIdAsync(int bookId);
+
+        Task<bool> AddSubjectToBook(AddSubjectToBook request);
+        Task<bool> RemoveSubjectFromBook(AddSubjectToBook request);
     }
 }

@@ -64,6 +64,19 @@ namespace BW.Services.Rating
             };
         }
 
+        public async Task<bool> UpdateRatingAsync(RatingUpdate rating)
+        {
+            RatingEntity? entity = await _dbContext.Ratings.FindAsync(rating.Id);
+            if(entity?.OwnerId != _userId)
+                return false;
+            entity.Title = rating.Title;
+            entity.Comment = rating.Comment;
+            entity.StarRating = rating.StarRating;
+
+            int numberOfChanges = await _dbContext.SaveChangesAsync();
+            return numberOfChanges == 1;
+        }
+
         public async Task<bool> DeleteRatingAsync(int ratingId)
         {
             var ratingEntity = await _dbContext.Ratings.FindAsync(ratingId);

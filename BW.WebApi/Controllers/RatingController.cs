@@ -38,6 +38,16 @@ namespace BW.WebApi.Controllers
             return detail is not null ? Ok(detail) : NotFound();
         }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateRating([FromBody] RatingUpdate rating)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+            return await _ratingService.UpdateRatingAsync(rating)
+                ? Ok("Rating successfully updated")
+                : BadRequest("Rating could not be updated");
+        }
+
         [HttpDelete("{ratingId:int}")]
         public async Task<IActionResult> DeleteRating([FromRoute] int ratingId)
         {

@@ -32,7 +32,8 @@ namespace BW.Services.Rating
                 Title = rating.Title,
                 Comment = rating.Comment,
                 StarRating = rating.StarRating,
-                OwnerId = _userId
+                OwnerId = _userId,
+                BookId = rating.BookId
             };
             _dbContext.Ratings.Add(entity);
             var numberOfChanges = await _dbContext.SaveChangesAsync();
@@ -61,7 +62,8 @@ namespace BW.Services.Rating
                 Title = rating.Title,
                 Comment = rating.Comment,
                 StarRating = rating.StarRating,
-                BookId = rating.BookId
+                BookId = rating.BookId,
+                OwnerId = _userId
             };
         }
 
@@ -75,7 +77,8 @@ namespace BW.Services.Rating
                     BookId = entity.BookId,
                     Title = entity.Title,
                     Comment = entity.Comment,
-                    StarRating = entity.StarRating
+                    StarRating = entity.StarRating,
+                    OwnerId = _userId
                 }).ToListAsync();
             return ratings;
         }
@@ -90,7 +93,8 @@ namespace BW.Services.Rating
                     OwnerId = entity.OwnerId,
                     Title = entity.Title,
                     Comment = entity.Comment,
-                    StarRating = entity.StarRating
+                    StarRating = entity.StarRating,
+                    BookId = entity.BookId
                 }).ToListAsync();
             return ratings;
         }

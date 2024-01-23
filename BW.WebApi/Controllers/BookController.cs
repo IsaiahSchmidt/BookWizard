@@ -34,6 +34,20 @@ namespace BW.WebApi.Controllers
             return BadRequest(new TextResponse("Could not create book"));
         }
 
+        [HttpPost("Search")]
+        public async Task<IActionResult> SearchBookFromTitle([FromBody] BookSearch request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var response = await _bookService.SearchForBookByTitle(request);
+            if (response is not null)
+            {
+                return Ok(response);
+            }
+            return BadRequest(new TextResponse("Could not find a book with that title"));
+        }
 
         [HttpPost("Subject")]
         public async Task<IActionResult> AddSubjectToBook([FromBody] AddSubjectToBook request)

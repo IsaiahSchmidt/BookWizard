@@ -197,6 +197,20 @@ namespace BW.Services.Book
             return true;
         }
 
+        public async Task<List<BookDetail>> SearchForBookByTitle(BookSearch request)
+        {
+            List<BookDetail> books =  await _dbContext.Books.Where(entity => entity.Title.ToLower().Contains(request.Title.ToLower()))
+            .Select(entity => new BookDetail() {
+                Id = entity.Id,
+                Title = entity.Title,
+                Author = entity.Author,
+                Description = entity.Description,
+                Length = entity.Length
+            }).ToListAsync();
+
+            return books;
+        }
+
         //* Helper Methods
 
         // 4/5 Private functions

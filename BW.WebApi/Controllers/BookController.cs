@@ -1,3 +1,4 @@
+using System.Security;
 using BW.Models.Book;
 using BW.Models.Responses;
 using BW.Services.Book;
@@ -68,6 +69,13 @@ namespace BW.WebApi.Controllers
         {
             var books = await _bookService.GetAllBooksAsync();
             return Ok(books);
+        }
+
+        [HttpGet("{author}")]
+        public async Task<IActionResult> GetBooksFromAuthor([FromRoute] string author)
+        {
+            var booksByAuthor = await _bookService.GetBooksFromAuthorAsync(author);
+            return Ok(booksByAuthor);
         }
 
         [HttpGet("{bookId:int}")]

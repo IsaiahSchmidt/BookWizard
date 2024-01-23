@@ -133,6 +133,20 @@ namespace BW.Services.Book
             };
         }
 
+        public async Task<IEnumerable<BookListItem>> GetBooksFromAuthorAsync(string author)
+        {
+            List<BookListItem> booksByAuthor = await _dbContext.Books
+                .Where(b => b.Author == author)
+                .Select(entity => new BookListItem
+                {
+                    Id = entity.Id,
+                    Title = entity.Title,
+                    Author = entity.Author,
+                    Description = entity.Description
+                }).ToListAsync();
+            return booksByAuthor;
+        }
+
         public async Task<bool> AddSubjectToBook(AddSubjectToBook request)
         {
             SubjectEntity? subjectEntity = _dbContext.Subjects.Find(request.SubjectId);

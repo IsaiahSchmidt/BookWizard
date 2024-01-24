@@ -4,6 +4,7 @@ using BW.Models.Book;
 using BW.Models.Library;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace BW.Services.Library;
 
@@ -85,5 +86,32 @@ public class LibraryService : ILibraryService
             return false;
 
         return true;
+    }
+
+     public async Task<List<BookWithStars>> FilterLibraryByRatingAsync(bool ascending)
+    {
+        List<LibraryEntity> libraryEntities = await _dbContext.Libraries.Where(entity => entity.UserId == _userId).ToListAsync();
+        List<BookWithStars> bookEntities = new List<BookWithStars>();
+
+        foreach(LibraryEntity libraryEntity in  libraryEntities) {
+            RatingEntity? rating = await _dbContext.Ratings.FirstOrDefaultAsync(entity => entity.BookId == libraryEntity.BookId && 
+                entity.OwnerId == _userId);
+            BookEntity? entity = _dbContext.Books.FirstOrDefault(entity => entity.Id == libraryEntity.BookId);
+            if(entity != null && rating != null) {
+                BookWithStars bookDetail = new(){
+                    Id = entity.Id,
+                    Title = entity.Title,
+                    Author = entity.Author,
+                    Description = entity.Description,
+                    Length = entity.Length,
+                    StarRating = rating.StarRating
+                };
+
+                bookEntities.Add(bookDetail);
+            }
+        }
+        if(!ascending)
+            return bookEntities.OrderByDescending(entity => entity.StarRating).ToList();
+        return bookEntities.OrderBy(entity => entity.StarRating).ToList();
     }
 }

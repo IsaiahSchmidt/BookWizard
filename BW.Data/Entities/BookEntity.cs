@@ -18,7 +18,7 @@ namespace BW.Data.Entities
         [MaxLength(250), MinLength(1)]
         public string Author {get; set;} = string.Empty;
 
-        [MaxLength(1000)]
+        [MaxLength(2000)]
         public string Description {get; set;} = string.Empty;
 
         public int Length {get; set;}

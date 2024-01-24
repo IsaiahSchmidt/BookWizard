@@ -13,6 +13,7 @@ using BW.Services.Token;
 using BW.Services.Book;
 using BW.Services.Rating;
 using BW.Services.Subject;
+using BW.Services.Library;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IRatingService, RatingService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
+builder.Services.AddScoped<ILibraryService, LibraryService>();
 
 
 builder.Services.AddHttpContextAccessor();

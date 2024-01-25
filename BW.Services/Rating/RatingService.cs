@@ -78,7 +78,7 @@ namespace BW.Services.Rating
                     Title = entity.Title,
                     Comment = entity.Comment,
                     StarRating = entity.StarRating,
-                    OwnerId = _userId
+                    OwnerId = entity.OwnerId
                 }).ToListAsync();
             return ratings;
         }

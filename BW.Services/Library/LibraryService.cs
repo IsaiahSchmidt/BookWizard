@@ -52,10 +52,13 @@ public class LibraryService : ILibraryService
         List<LibraryEntity> libraryEntities = await _dbContext.Libraries.Where(entity => entity.UserId == _userId).ToListAsync();
         List<BookDetail> bookEntities = new List<BookDetail>();
 
-        foreach(LibraryEntity libraryEntity in  libraryEntities) {
+        foreach (LibraryEntity libraryEntity in libraryEntities)
+        {
             BookEntity? entity = _dbContext.Books.FirstOrDefault(entity => entity.Id == libraryEntity.BookId);
-            if(entity != null) {
-                BookDetail bookDetail = new(){
+            if (entity != null)
+            {
+                BookDetail bookDetail = new()
+                {
                     Id = entity.Id,
                     Title = entity.Title,
                     Author = entity.Author,
@@ -66,20 +69,43 @@ public class LibraryService : ILibraryService
                 bookEntities.Add(bookDetail);
             }
         }
-
-        return bookEntities;
+        List<BookDetail> books = new List<BookDetail>();
+        foreach (var book in bookEntities)
+        {
+            List<BookSubjectEntity> bookToSubjects = _dbContext.BooksToSubjests.Where(entity => entity.BookId == book.Id).ToList();
+            List<string> subjects = new List<string>();
+            foreach (BookSubjectEntity bookToSubject in bookToSubjects)
+            {
+                SubjectEntity? subject = await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Id == bookToSubject.SubjectId);
+                if (subject != null)
+                {
+                    subjects.Add(subject.Name);
+                }
+            }
+            books.Add(new BookDetail
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Author = book.Author,
+                Description = book.Description,
+                Length = book.Length,
+                Subjects = subjects
+            });
+        }
+        return books;
     }
 
     public async Task<bool> RemoveFromLibrary(LibraryRemove request)
     {
         LibraryEntity? entity = _dbContext.Libraries.FirstOrDefault(entity => entity.BookId == request.BookId && entity.UserId == _userId);
-        
-        if(entity is null) {
+
+        if (entity is null)
+        {
             return false;
         }
 
         _dbContext.Libraries.Remove(entity);
-        
+
         var numberOfChanges = await _dbContext.SaveChangesAsync();
 
         if (numberOfChanges != 1)
@@ -88,17 +114,20 @@ public class LibraryService : ILibraryService
         return true;
     }
 
-     public async Task<List<BookWithStars>> FilterLibraryByRatingAsync(bool ascending)
+    public async Task<List<BookWithStars>> FilterLibraryByRatingAsync(bool ascending)
     {
         List<LibraryEntity> libraryEntities = await _dbContext.Libraries.Where(entity => entity.UserId == _userId).ToListAsync();
         List<BookWithStars> bookEntities = new List<BookWithStars>();
 
-        foreach(LibraryEntity libraryEntity in  libraryEntities) {
-            RatingEntity? rating = await _dbContext.Ratings.FirstOrDefaultAsync(entity => entity.BookId == libraryEntity.BookId && 
+        foreach (LibraryEntity libraryEntity in libraryEntities)
+        {
+            RatingEntity? rating = await _dbContext.Ratings.FirstOrDefaultAsync(entity => entity.BookId == libraryEntity.BookId &&
                 entity.OwnerId == _userId);
             BookEntity? entity = _dbContext.Books.FirstOrDefault(entity => entity.Id == libraryEntity.BookId);
-            if(entity != null && rating != null) {
-                BookWithStars bookDetail = new(){
+            if (entity != null && rating != null)
+            {
+                BookWithStars bookDetail = new()
+                {
                     Id = entity.Id,
                     Title = entity.Title,
                     Author = entity.Author,
@@ -110,7 +139,7 @@ public class LibraryService : ILibraryService
                 bookEntities.Add(bookDetail);
             }
         }
-        if(!ascending)
+        if (!ascending)
             return bookEntities.OrderByDescending(entity => entity.StarRating).ToList();
         return bookEntities.OrderBy(entity => entity.StarRating).ToList();
     }

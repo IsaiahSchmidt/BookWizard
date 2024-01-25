@@ -123,9 +123,11 @@ namespace BW.Services.Book
             BookEntity? book = await _dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId);
             List<BookSubjectEntity> bookToSubjects = _dbContext.BooksToSubjests.Where(entity => entity.BookId == bookId).ToList();
             List<string> subjects = new List<string>();
-            foreach(BookSubjectEntity bookToSubject in bookToSubjects){
+            foreach (BookSubjectEntity bookToSubject in bookToSubjects)
+            {
                 SubjectEntity? subject = await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Id == bookToSubject.SubjectId);
-                if(subject != null) {
+                if (subject != null)
+                {
                     subjects.Add(subject.Name);
                 }
             }
@@ -140,8 +142,9 @@ namespace BW.Services.Book
             };
         }
 
-        public async Task<IEnumerable<BookListItem>> GetBooksFromAuthorAsync(string author)
+        public async Task<IEnumerable<BookDetail>> GetBooksFromAuthorAsync(string author)
         {
+            List<BookDetail> books = new List<BookDetail>();
             List<BookListItem> booksByAuthor = await _dbContext.Books
                 .Where(b => b.Author == author)
                 .Select(entity => new BookListItem
@@ -151,7 +154,30 @@ namespace BW.Services.Book
                     Author = entity.Author,
                     Description = entity.Description
                 }).ToListAsync();
-            return booksByAuthor;
+            foreach (var book in booksByAuthor)
+            {
+                List<BookSubjectEntity> bookToSubjects = _dbContext.BooksToSubjests.Where(entity => entity.BookId == book.Id).ToList();
+                List<string> subjects = new List<string>();
+                foreach (BookSubjectEntity bookToSubject in bookToSubjects)
+                {
+                    SubjectEntity? subject = await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Id == bookToSubject.SubjectId);
+                    if (subject != null)
+                    {
+                        subjects.Add(subject.Name);
+                    }
+                }
+                books.Add(new BookDetail
+                {
+                    Id = book.Id,
+                    Title = book.Title,
+                    Author = book.Author,
+                    Description = book.Description,
+                    Length = book.Length,
+                    Subjects = subjects
+                });
+            }
+            return books;
+
         }
 
         public async Task<bool> AddSubjectToBook(AddSubjectToBook request)
@@ -206,8 +232,9 @@ namespace BW.Services.Book
 
         public async Task<List<BookDetail>> SearchForBookByTitle(BookSearch request)
         {
-            List<BookDetail> books =  await _dbContext.Books.Where(entity => entity.Title.ToLower().Contains(request.Title.ToLower()))
-            .Select(entity => new BookDetail() {
+            List<BookDetail> books = await _dbContext.Books.Where(entity => entity.Title.ToLower().Contains(request.Title.ToLower()))
+            .Select(entity => new BookDetail()
+            {
                 Id = entity.Id,
                 Title = entity.Title,
                 Author = entity.Author,

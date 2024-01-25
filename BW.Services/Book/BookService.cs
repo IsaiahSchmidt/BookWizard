@@ -62,14 +62,12 @@ namespace BW.Services.Book
             {
                 entity.Title = book.Title;
                 entity.Author = book.Author;
-
                 OL_Works? work = await FetchDataFromAPI(book.Title, book.Author);
                 if (work == null)
                 {
                     Console.WriteLine("no Books Found");
                     return null;
                 }
-
                 entity.Description = work.Description;
                 // TODO: Update for book length
                 _dbContext.Books.Add(entity);
@@ -123,13 +121,22 @@ namespace BW.Services.Book
         public async Task<BookDetail?> GetBookByIdAsync(int bookId)
         {
             BookEntity? book = await _dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId);
+            List<BookSubjectEntity> bookToSubjects = _dbContext.BooksToSubjests.Where(entity => entity.BookId == bookId).ToList();
+            List<string> subjects = new List<string>();
+            foreach(BookSubjectEntity bookToSubject in bookToSubjects){
+                SubjectEntity? subject = await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Id == bookToSubject.SubjectId);
+                if(subject != null) {
+                    subjects.Add(subject.Name);
+                }
+            }
             return book is null ? null : new BookDetail
             {
                 Id = book.Id,
                 Title = book.Title,
                 Author = book.Author,
                 Description = book.Description,
-                Length = book.Length
+                Length = book.Length,
+                Subjects = subjects
             };
         }
 
@@ -233,11 +240,9 @@ namespace BW.Services.Book
             if (oL_Search.Docs.Count < 1)
                 return null;
             HttpResponseMessage worksResponse = await client.GetAsync($"https://openlibrary.org{oL_Search.Docs[0].Key}.json");
-
             OL_Works? oL_Works = JsonSerializer.Deserialize<OL_Works>(await worksResponse.Content.ReadAsStringAsync());
             if (oL_Works == null)
                 return null;
-
             return oL_Works;
 
         }

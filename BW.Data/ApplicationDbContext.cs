@@ -32,5 +32,4 @@ public class ApplicationDbContext : IdentityDbContext<UserEntity, IdentityRole<i
     //     modelBuilder.Entity<ReplyEntity>().HasOne(n => n.Parent).WithMany().HasForeignKey(n => n.ParentId);
     //     modelBuilder.Entity<PostEntity>().HasOne(n => n.Author).HasForeignKey(n => n.AuthorId);
     // }
-
 }

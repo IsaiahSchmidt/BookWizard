@@ -12,5 +12,7 @@ namespace BW.Models.Book
         public string Author {get; set;} = string.Empty;
         public string Description {get; set;} = string.Empty;
         public int Length {get; set;}
+
+        public List<string> Subjects { get; set; } = new List<string>();
     }
 }

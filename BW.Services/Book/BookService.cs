@@ -180,6 +180,38 @@ namespace BW.Services.Book
 
         }
 
+        public async Task<List<BookWithStars>> GetAllBooksByAVGRating(bool ascending)
+        {
+            List<BookWithStars> books = new List<BookWithStars>();
+
+            List<BookListItem> bookListItems = await _dbContext.Books
+                .Select(entity => new BookListItem
+                {
+                    Id = entity.Id,
+                    Title = entity.Title,
+                    Author = entity.Author,
+                    Description = entity.Description
+                }).ToListAsync();
+
+            foreach(var book in bookListItems) {
+                List<RatingEntity> ratings = _dbContext.Ratings.Where(rating => rating.BookId == book.Id).ToList();
+
+                var avgStars = (int)ratings.Average(rating => rating.StarRating);
+                books.Add(new BookWithStars(){
+                    Id = book.Id,
+                    Title = book.Title,
+                    Author = book.Author,
+                    Description = book.Description,
+                    Length = book.Length,
+                    StarRating = avgStars
+                });
+            }
+            if(!ascending) {
+                return books.OrderByDescending(entity => entity.StarRating).ToList();    
+            }
+            return books.OrderBy(entity => entity.StarRating).ToList();
+        }
+
         public async Task<bool> AddSubjectToBook(AddSubjectToBook request)
         {
             SubjectEntity? subjectEntity = _dbContext.Subjects.Find(request.SubjectId);

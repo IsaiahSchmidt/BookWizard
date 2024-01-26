@@ -65,21 +65,14 @@ namespace BW.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllBooks()
+        public async Task<IActionResult> GetAllBooks([FromQuery(Name = "subject")] bool subject = false)
         {
-            var books = await _bookService.GetAllBooksAsync();
-            return Ok(books);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> SortedBooksByRating()
-        {
-            var books = await _bookService.GetAllBooksAsync();
+            var books = await _bookService.GetAllBooksAsync(subject);
             return Ok(books);
         }
 
         [HttpGet("/rating")]
-        public async Task<IActionResult> GetBooksFromAuthor([FromQuery(Name = "asending")] bool ascending = true)
+        public async Task<IActionResult> SortedBooksByRating([FromQuery(Name = "asending")] bool ascending = true)
         {
             var booksByRating = await _bookService.GetAllBooksByAVGRating(ascending);
             return Ok(booksByRating);

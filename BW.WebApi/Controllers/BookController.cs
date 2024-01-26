@@ -71,7 +71,7 @@ namespace BW.WebApi.Controllers
             return Ok(books);
         }
 
-        [HttpGet("/rating")]
+        [HttpGet("Rating")]
         public async Task<IActionResult> SortedBooksByRating([FromQuery(Name = "asending")] bool ascending = true)
         {
             var booksByRating = await _bookService.GetAllBooksByAVGRating(ascending);

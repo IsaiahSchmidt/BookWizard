@@ -212,9 +212,9 @@ namespace BW.Services.Book
             return books;
         }
 
-        public async Task<List<BookWithStars>> GetAllBooksByAVGRating(bool ascending)
+        public async Task<List<BookWithStarsDouble>> GetAllBooksByAVGRating(bool ascending)
         {
-            List<BookWithStars> books = new List<BookWithStars>();
+            List<BookWithStarsDouble> books = new List<BookWithStarsDouble>();
 
             List<BookListItem> bookListItems = await _dbContext.Books
                 .Select(entity => new BookListItem
@@ -228,13 +228,13 @@ namespace BW.Services.Book
             foreach (var book in bookListItems)
             {
                 List<RatingEntity> ratings = _dbContext.Ratings.Where(rating => rating.BookId == book.Id).ToList();
-                int avgStars = 0;
+                double avgStars = 0;
                 if (ratings.Count != 0)
                 {
-                    avgStars = (int)ratings.Average(rating => rating.StarRating);
+                    avgStars = Math.Round(ratings.Average(rating => rating.StarRating), 2);
                 }
 
-                books.Add(new BookWithStars()
+                books.Add(new BookWithStarsDouble()
                 {
                     Id = book.Id,
                     Title = book.Title,

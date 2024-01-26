@@ -9,7 +9,7 @@ namespace BW.Services.Book
     public interface IBookService
     {
         Task<BookListItem?> CreateBookAsync(BookCreate book);
-        Task<IEnumerable<BookListItem>> GetAllBooksAsync();
+        Task<IEnumerable<BookDetail>> GetAllBooksAsync(bool subjects);
         Task<BookDetail?> GetBookByIdAsync(int bookId);
         Task<IEnumerable<BookDetail>> GetBooksFromAuthorAsync(string author);
         Task<List<BookDetail>> SearchForBookByTitle(BookSearch request);

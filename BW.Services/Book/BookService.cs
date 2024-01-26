@@ -105,9 +105,9 @@ namespace BW.Services.Book
         }
 
 
-        public async Task<IEnumerable<BookListItem>> GetAllBooksAsync()
+        public async Task<IEnumerable<BookDetail>> GetAllBooksAsync(bool subject)
         {
-            List<BookListItem> books = await _dbContext.Books
+            List<BookListItem> bookListItems = await _dbContext.Books
                 .Select(entity => new BookListItem
                 {
                     Id = entity.Id,
@@ -115,6 +115,33 @@ namespace BW.Services.Book
                     Author = entity.Author,
                     Description = entity.Description
                 }).ToListAsync();
+            List<BookDetail> books = new List<BookDetail>();
+            foreach (var book in bookListItems)
+            {
+                var bookToBeAdded = new BookDetail()
+                {
+                    Title = book.Title,
+                    Author = book.Author,
+                    Description = book.Description,
+                    Length = book.Length
+                };
+                if (subject)
+                {
+                    List<BookSubjectEntity> bookToSubjects = _dbContext.BooksToSubjests.Where(entity => entity.BookId == book.Id).ToList();
+                    List<string> subjects = new List<string>();
+                    foreach (BookSubjectEntity bookToSubject in bookToSubjects)
+                    {
+                        SubjectEntity? sub = await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Id == bookToSubject.SubjectId);
+                        if (sub != null)
+                        {
+                            subjects.Add(sub.Name);
+                        }
+                    }
+                    bookToBeAdded.Subjects = subjects;
+                }
+
+                books.Add(bookToBeAdded);
+            }
             return books;
         }
 
@@ -192,11 +219,13 @@ namespace BW.Services.Book
                     Description = entity.Description
                 }).ToListAsync();
 
-            foreach(var book in bookListItems) {
+            foreach (var book in bookListItems)
+            {
                 List<RatingEntity> ratings = _dbContext.Ratings.Where(rating => rating.BookId == book.Id).ToList();
 
                 var avgStars = (int)ratings.Average(rating => rating.StarRating);
-                books.Add(new BookWithStars(){
+                books.Add(new BookWithStars()
+                {
                     Id = book.Id,
                     Title = book.Title,
                     Author = book.Author,
@@ -205,8 +234,9 @@ namespace BW.Services.Book
                     StarRating = avgStars
                 });
             }
-            if(!ascending) {
-                return books.OrderByDescending(entity => entity.StarRating).ToList();    
+            if (!ascending)
+            {
+                return books.OrderByDescending(entity => entity.StarRating).ToList();
             }
             return books.OrderBy(entity => entity.StarRating).ToList();
         }

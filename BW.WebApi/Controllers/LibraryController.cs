@@ -60,7 +60,7 @@ namespace BW.WebApi.Controllers
         }
 
         [HttpGet("/Ratings")]
-        public async Task<IActionResult> FilterLibraryByRating([FromQuery(Name = "ascending")] bool ascending)
+        public async Task<IActionResult> FilterLibraryByRating([FromQuery(Name = "ascending")] bool ascending = true)
         {
             var library = await _libraryService.FilterLibraryByRatingAsync(ascending);
             return Ok(library);

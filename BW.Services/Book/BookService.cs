@@ -120,6 +120,7 @@ namespace BW.Services.Book
             {
                 var bookToBeAdded = new BookDetail()
                 {
+                    Id = book.Id,
                     Title = book.Title,
                     Author = book.Author,
                     Description = book.Description,

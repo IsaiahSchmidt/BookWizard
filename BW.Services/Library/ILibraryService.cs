@@ -9,7 +9,7 @@ public interface ILibraryService
 
     public Task<bool> RemoveFromLibrary(LibraryRemove request);
 
-    public Task<List<BookDetail>> GetAllBookInLibrary();
+    public Task<List<BookDetail>> GetAllBookInLibrary(bool showSubjects);
     public Task<List<BookWithStars>> FilterLibraryByRatingAsync(bool ascending);
 
 

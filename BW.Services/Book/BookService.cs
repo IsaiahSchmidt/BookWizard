@@ -142,7 +142,7 @@ namespace BW.Services.Book
             };
         }
 
-        public async Task<IEnumerable<BookDetail>> GetBooksFromAuthorAsync(string author)
+        public async Task<IEnumerable<BookDetail>> GetBooksFromAuthorAsync(string author, bool showSubjects)
         {
             List<BookDetail> books = new List<BookDetail>();
             List<BookListItem> booksByAuthor = await _dbContext.Books
@@ -154,27 +154,32 @@ namespace BW.Services.Book
                     Author = entity.Author,
                     Description = entity.Description
                 }).ToListAsync();
+
             foreach (var book in booksByAuthor)
             {
-                List<BookSubjectEntity> bookToSubjects = _dbContext.BooksToSubjests.Where(entity => entity.BookId == book.Id).ToList();
-                List<string> subjects = new List<string>();
-                foreach (BookSubjectEntity bookToSubject in bookToSubjects)
-                {
-                    SubjectEntity? subject = await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Id == bookToSubject.SubjectId);
-                    if (subject != null)
-                    {
-                        subjects.Add(subject.Name);
-                    }
-                }
-                books.Add(new BookDetail
+                BookDetail detail = new()
                 {
                     Id = book.Id,
                     Title = book.Title,
-                    Author = book.Author,
                     Description = book.Description,
-                    Length = book.Length,
-                    Subjects = subjects
-                });
+                    Author = book.Author,
+                    Length = book.Length
+                };
+                if (showSubjects)
+                {
+                    List<BookSubjectEntity> bookToSubjects = _dbContext.BooksToSubjests.Where(entity => entity.BookId == book.Id).ToList();
+                    List<string> subjects = new List<string>();
+                    foreach (BookSubjectEntity bookToSubject in bookToSubjects)
+                    {
+                        SubjectEntity? subject = await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Id == bookToSubject.SubjectId);
+                        if (subject != null)
+                        {
+                            subjects.Add(subject.Name);
+                        }
+                    }
+                    detail.Subjects = subjects;
+                }
+                books.Add(detail);
             }
             return books;
         }

@@ -47,7 +47,7 @@ public class LibraryService : ILibraryService
         return true;
     }
 
-    public async Task<List<BookDetail>> GetAllBookInLibrary()
+    public async Task<List<BookDetail>> GetAllBookInLibrary(bool showSubjects)
     {
         List<LibraryEntity> libraryEntities = await _dbContext.Libraries.Where(entity => entity.UserId == _userId).ToListAsync();
         List<BookDetail> bookEntities = new List<BookDetail>();
@@ -72,25 +72,29 @@ public class LibraryService : ILibraryService
         List<BookDetail> books = new List<BookDetail>();
         foreach (var book in bookEntities)
         {
-            List<BookSubjectEntity> bookToSubjects = _dbContext.BooksToSubjests.Where(entity => entity.BookId == book.Id).ToList();
-            List<string> subjects = new List<string>();
-            foreach (BookSubjectEntity bookToSubject in bookToSubjects)
-            {
-                SubjectEntity? subject = await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Id == bookToSubject.SubjectId);
-                if (subject != null)
-                {
-                    subjects.Add(subject.Name);
-                }
-            }
-            books.Add(new BookDetail
+            BookDetail detail = new()
             {
                 Id = book.Id,
                 Title = book.Title,
-                Author = book.Author,
                 Description = book.Description,
-                Length = book.Length,
-                Subjects = subjects
-            });
+                Author = book.Author,
+                Length = book.Length
+            };
+            if (showSubjects)
+            {
+                List<BookSubjectEntity> bookToSubjects = _dbContext.BooksToSubjests.Where(entity => entity.BookId == book.Id).ToList();
+                List<string> subjects = new List<string>();
+                foreach (BookSubjectEntity bookToSubject in bookToSubjects)
+                {
+                    SubjectEntity? subject = await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Id == bookToSubject.SubjectId);
+                    if (subject != null)
+                    {
+                        subjects.Add(subject.Name);
+                    }
+                }
+                detail.Subjects = subjects;
+            }
+            books.Add(detail);
         }
         return books;
     }

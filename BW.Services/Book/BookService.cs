@@ -228,8 +228,12 @@ namespace BW.Services.Book
             foreach (var book in bookListItems)
             {
                 List<RatingEntity> ratings = _dbContext.Ratings.Where(rating => rating.BookId == book.Id).ToList();
+                int avgStars = 0;
+                if (ratings.Count != 0)
+                {
+                    avgStars = (int)ratings.Average(rating => rating.StarRating);
+                }
 
-                var avgStars = (int)ratings.Average(rating => rating.StarRating);
                 books.Add(new BookWithStars()
                 {
                     Id = book.Id,

@@ -39,9 +39,9 @@ namespace BW.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllBooks()
+        public async Task<IActionResult> GetAllBooks([FromQuery(Name = "showSubjects")] bool showSubjects = false)
         {
-            var books = await _libraryService.GetAllBookInLibrary();
+            var books = await _libraryService.GetAllBookInLibrary(showSubjects);
             return Ok(books);
         }
 

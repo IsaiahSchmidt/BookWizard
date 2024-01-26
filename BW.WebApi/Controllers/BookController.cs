@@ -79,9 +79,9 @@ namespace BW.WebApi.Controllers
         }
 
         [HttpGet("{author}")]
-        public async Task<IActionResult> GetBooksFromAuthor([FromRoute] string author)
+        public async Task<IActionResult> GetBooksFromAuthor([FromRoute] string author, bool showSubjects)
         {
-            var booksByAuthor = await _bookService.GetBooksFromAuthorAsync(author);
+            var booksByAuthor = await _bookService.GetBooksFromAuthorAsync(author, showSubjects);
             return Ok(booksByAuthor);
         }
 

@@ -99,5 +99,12 @@ namespace BW.WebApi.Controllers
             }
             return BadRequest(new TextResponse("Could not remove subject from book"));
         }
+
+        [HttpGet("By{subject}")]
+        public async Task<IActionResult> GetBooksBySubject([FromRoute] string subject)
+        {
+            var booksBySubject = await _bookService.GetBooksBySubjectAsync(subject);
+            return Ok(booksBySubject);
+        }
     }
 }

@@ -177,7 +177,6 @@ namespace BW.Services.Book
                 });
             }
             return books;
-
         }
 
         public async Task<bool> AddSubjectToBook(AddSubjectToBook request)
@@ -244,6 +243,33 @@ namespace BW.Services.Book
 
             return books;
         }
+
+        public async Task<List<BookListItem>> GetBooksBySubjectAsync(string subject)
+        {
+            List<BookListItem> books = new List<BookListItem>();
+            List<SubjectEntity> subjects = await _dbContext.Subjects.Where(s => s.Name.Contains(subject)).ToListAsync();
+            foreach (var sub in subjects)
+            {
+                List<BookSubjectEntity> bookToSubjects = _dbContext.BooksToSubjests.Where(entity => entity.SubjectId == sub.Id).ToList();
+                foreach (BookSubjectEntity bookToSubject in bookToSubjects)
+                {
+                    BookEntity? book = await _dbContext.Books.FirstOrDefaultAsync(s => s.Id == bookToSubject.BookId);
+                    if (book != null && !books.Exists(b => b.Id == book.Id))
+                    {
+                        books.Add(new BookListItem
+                        {
+                            Id = book.Id,
+                            Title = book.Title,
+                            Author = book.Author,
+                            Description = book.Description,
+                            Length = book.Length
+                        });
+                    }
+                }
+            }
+            return books;
+        }
+
 
         //* Helper Methods
 

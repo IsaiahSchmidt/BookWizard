@@ -15,5 +15,6 @@ namespace BW.Services.Book
         Task<List<BookDetail>> SearchForBookByTitle(BookSearch request);
         Task<bool> AddSubjectToBook(AddSubjectToBook request);
         Task<bool> RemoveSubjectFromBook(AddSubjectToBook request);
+        Task<List<BookListItem>> GetBooksBySubjectAsync(string subject); 
     }
 }

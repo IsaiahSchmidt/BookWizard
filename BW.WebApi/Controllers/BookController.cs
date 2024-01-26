@@ -71,6 +71,20 @@ namespace BW.WebApi.Controllers
             return Ok(books);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> SortedBooksByRating()
+        {
+            var books = await _bookService.GetAllBooksAsync();
+            return Ok(books);
+        }
+
+        [HttpGet("/rating")]
+        public async Task<IActionResult> GetBooksFromAuthor([FromQuery(Name = "asending")] bool ascending = true)
+        {
+            var booksByRating = await _bookService.GetAllBooksByAVGRating(ascending);
+            return Ok(booksByRating);
+        }
+
         [HttpGet("{author}")]
         public async Task<IActionResult> GetBooksFromAuthor([FromRoute] string author)
         {

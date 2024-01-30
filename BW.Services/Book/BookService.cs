@@ -286,13 +286,13 @@ namespace BW.Services.Book
                 return false;
             }
 
-            BookSubjectEntity entity = new()
-            {
-                BookId = bookEntity.Id,
-                SubjectId = subjectEntity.Id
-            };
+            BookSubjectEntity? entity = _dbContext.BooksToSubjests.FirstOrDefault(entity => entity.BookId == bookEntity.Id && entity.SubjectId == subjectEntity.Id);
 
+            if(entity == null) {
+                return false;
+            }
             _dbContext.BooksToSubjests.Remove(entity);
+            
             var numOfChanges = await _dbContext.SaveChangesAsync();
             if (numOfChanges != 1)
             {

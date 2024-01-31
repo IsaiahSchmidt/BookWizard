@@ -59,7 +59,7 @@ namespace BW.WebApi.Controllers
             return BadRequest(new TextResponse("Could not remove book from your Library"));
         }
 
-        [HttpGet("/Ratings")]
+        [HttpGet("Rating")]
         public async Task<IActionResult> FilterLibraryByRating([FromQuery(Name = "ascending")] bool ascending = true)
         {
             var library = await _libraryService.FilterLibraryByRatingAsync(ascending);
